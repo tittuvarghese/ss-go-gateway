@@ -61,3 +61,54 @@ func Register(c *gin.Context) {
 		"message": resp.Message,
 	})
 }
+
+func Login(c *gin.Context) {
+
+	var request models.LoginRequest
+
+	// Bind the JSON data to the user struct
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Validate input
+	if request.Username == "" || request.Password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Username and password are required"})
+		return
+	}
+
+	// Grpc Request to Customer Service
+
+	service := client.CustomerService
+	// Prepare the registration request
+	loginReq := &proto.LoginRequest{
+		Username: request.Username,
+		Password: request.Password,
+	}
+
+	resp, err := service.Login(context.Background(), loginReq)
+	if err != nil {
+		log.Error("Failed to authenticate the user", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	log.Info("Received response from the customer service %s", resp.Token)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "Successfully authenticated the user",
+		"token":   resp.Token,
+	})
+
+}
+
+func GetProfile(c *gin.Context) {
+	claims, _ := c.Get("claims")
+
+	// Do something with the claims (e.g., display the username)
+	c.JSON(200, gin.H{
+		"claims": claims,
+	})
+}

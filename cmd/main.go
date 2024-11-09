@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/tittuvarghese/core/config"
+	"github.com/tittuvarghese/core/jwt"
 	"github.com/tittuvarghese/core/logger"
 	"github.com/tittuvarghese/gateway/client"
 	"github.com/tittuvarghese/gateway/constants"
@@ -24,6 +25,8 @@ func main() {
 	// Handlers
 	server.AddHandler(constants.HttpGet, constants.GatewayServicePath, "/status", service.Status)
 	server.AddHandler(constants.HttpPost, constants.CustomerServicePath, "/register", service.Register)
+	server.AddHandler(constants.HttpPost, constants.CustomerServicePath, "/login", service.Login)
+	server.AddHandler(constants.HttpGet, constants.CustomerServicePath, "/profile", jwt.Authorize(), service.GetProfile)
 
 	// Client Connections
 	client.NewCustomerServiceClient()
