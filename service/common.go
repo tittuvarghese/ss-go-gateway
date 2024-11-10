@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/tittuvarghese/core/jwt"
 	"github.com/tittuvarghese/core/logger"
 	"github.com/tittuvarghese/customer-service/proto"
 	"github.com/tittuvarghese/gateway/client"
@@ -26,13 +28,13 @@ func Register(c *gin.Context) {
 
 	// Bind the JSON data to the user struct
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": err.Error()})
 		return
 	}
 
 	// Validate input
 	if request.Username == "" || request.Password == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Username and password are required"})
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": "Username and password are required"})
 		return
 	}
 
@@ -50,7 +52,7 @@ func Register(c *gin.Context) {
 	resp, err := service.Register(context.Background(), registerReq)
 	if err != nil {
 		log.Error("Failed to register user", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": err.Error()})
 		return
 	}
 
@@ -68,20 +70,20 @@ func Login(c *gin.Context) {
 
 	// Bind the JSON data to the user struct
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": err.Error()})
 		return
 	}
 
 	// Validate input
 	if request.Username == "" || request.Password == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Username and password are required"})
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": "Username and password are required"})
 		return
 	}
 
 	// Grpc Request to Customer Service
-
 	service := client.CustomerService
-	// Prepare the registration request
+
+	// Prepare the login request
 	loginReq := &proto.LoginRequest{
 		Username: request.Username,
 		Password: request.Password,
@@ -90,7 +92,7 @@ func Login(c *gin.Context) {
 	resp, err := service.Login(context.Background(), loginReq)
 	if err != nil {
 		log.Error("Failed to authenticate the user", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": err.Error()})
 		return
 	}
 
@@ -105,10 +107,41 @@ func Login(c *gin.Context) {
 }
 
 func GetProfile(c *gin.Context) {
-	claims, _ := c.Get("claims")
+	claims, _ := jwt.GetClaims(c)
 
-	// Do something with the claims (e.g., display the username)
-	c.JSON(200, gin.H{
-		"claims": claims,
+	// Type assert the `Data` field to map[string]interface{}
+	request, ok := claims.Data.(map[string]interface{})
+	if !ok {
+		log.Error("Failed to retrieve the user", fmt.Errorf("invalid map"))
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": "failed to retrieve the user"})
+	}
+
+	service := client.CustomerService
+
+	// Prepare the get profile request
+	userid, ok := request["userid"].(string)
+	if !ok {
+		log.Error("Failed to retrieve the user", fmt.Errorf("userid is not a string"))
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": "failed to retrieve the user"})
+		return
+	}
+
+	getProfileReq := &proto.GetProfileRequest{
+		Userid: userid,
+	}
+
+	resp, err := service.GetProfile(context.Background(), getProfileReq)
+	if err != nil {
+		log.Error("Failed to authenticate the user", err)
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": err.Error()})
+		return
+	}
+
+	log.Info("Received response from the customer service %s", resp.Userid)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "Successfully retrieved the user information",
+		"data":    resp,
 	})
 }
