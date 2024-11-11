@@ -65,3 +65,31 @@ func CreateProduct(c *gin.Context) {
 		"message": resp.Message,
 	})
 }
+
+func GetProduct(c *gin.Context) {
+	productId := c.Param("productId")
+
+	// Grpc Request to Product Service
+	service := client.ProductService
+
+	getProductReq := &proto.GetProductRequest{
+		ProductId: productId,
+	}
+
+	resp, err := service.GetProduct(context.Background(), getProductReq)
+	if err != nil {
+		log.Error("Failed to create the product", err)
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": err.Error()})
+		return
+	}
+
+	log.Info("Received response from the product service %s", resp.Message)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": resp.Message,
+		"data":    resp.Product,
+	})
+}
+
+func GetProducts(c *gin.Context) {}
