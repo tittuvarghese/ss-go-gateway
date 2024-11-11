@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-var log = logger.NewLogger("customer-service-client")
+var log = logger.NewLogger("gateway-client")
 
 var CustomerService proto.AuthServiceClient
 
@@ -22,7 +22,6 @@ func NewCustomerServiceClient() *proto.AuthServiceClient {
 
 	// Create a new client for the AuthService
 	CustomerService = proto.NewAuthServiceClient(conn)
-
 	// defer conn.Close()
 	return &CustomerService
 }

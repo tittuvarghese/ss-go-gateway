@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tittuvarghese/core/jwt"
 	"github.com/tittuvarghese/core/logger"
+	"github.com/tittuvarghese/core/validator"
 	"github.com/tittuvarghese/customer-service/proto"
 	"github.com/tittuvarghese/gateway/client"
 	"github.com/tittuvarghese/gateway/models"
@@ -13,6 +14,8 @@ import (
 )
 
 var log = logger.NewLogger("gateway-service")
+
+var structValidator = validator.NewStructValidator()
 
 // Status service that returns server status
 func Status(c *gin.Context) {
@@ -47,6 +50,7 @@ func Register(c *gin.Context) {
 		Password:  request.Password,
 		Firstname: request.Firstname,
 		Lastname:  request.Lastname,
+		Type:      request.Type,
 	}
 
 	resp, err := service.Register(context.Background(), registerReq)
@@ -144,4 +148,24 @@ func GetProfile(c *gin.Context) {
 		"message": "Successfully retrieved the user information",
 		"data":    resp,
 	})
+}
+
+func GetUser(c *gin.Context) (string, error) {
+	claims, _ := jwt.GetClaims(c)
+
+	// Type assert the `Data` field to map[string]interface{}
+	request, ok := claims.Data.(map[string]interface{})
+	if !ok {
+		log.Error("Failed to retrieve the user", fmt.Errorf("invalid map"))
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": "failed to retrieve the user"})
+	}
+
+	// Prepare the get profile request
+	userid, ok := request["userid"].(string)
+	if !ok {
+		log.Error("Failed to retrieve the user", fmt.Errorf("userid is not a string"))
+		return "", fmt.Errorf("unable to get the userid")
+	}
+
+	return userid, nil
 }

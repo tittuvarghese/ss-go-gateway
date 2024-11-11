@@ -27,9 +27,11 @@ func main() {
 	server.AddHandler(constants.HttpPost, constants.CustomerServicePath, "/register", service.Register)
 	server.AddHandler(constants.HttpPost, constants.CustomerServicePath, "/login", service.Login)
 	server.AddHandler(constants.HttpGet, constants.CustomerServicePath, "/profile", jwt.Authorize(), service.GetProfile)
+	server.AddHandler(constants.HttpPost, constants.ProductServicePath, "/create", jwt.Authorize(), service.CreateProduct)
 
 	// Client Connections
 	client.NewCustomerServiceClient()
+	client.NewProductServiceClient()
 
 	server.Run(constants.HttpServerPort)
 }
