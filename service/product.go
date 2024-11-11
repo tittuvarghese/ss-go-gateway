@@ -78,7 +78,7 @@ func GetProduct(c *gin.Context) {
 
 	resp, err := service.GetProduct(context.Background(), getProductReq)
 	if err != nil {
-		log.Error("Failed to create the product", err)
+		log.Error("Failed to retrieve the product", err)
 		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": err.Error()})
 		return
 	}
@@ -92,4 +92,26 @@ func GetProduct(c *gin.Context) {
 	})
 }
 
-func GetProducts(c *gin.Context) {}
+func GetProducts(c *gin.Context) {
+	// Grpc Request to Product Service
+	service := client.ProductService
+
+	getProductsReq := &proto.GetProductsRequest{
+		Query: nil,
+	}
+
+	resp, err := service.GetProducts(context.Background(), getProductsReq)
+	if err != nil {
+		log.Error("Failed to retrieve the products", err)
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": err.Error()})
+		return
+	}
+
+	log.Info("Received response from the product service %s", resp.Message)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": resp.Message,
+		"data":    resp.Products,
+	})
+}
