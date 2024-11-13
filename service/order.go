@@ -66,10 +66,43 @@ func CreateOrder(c *gin.Context) {
 		return
 	}
 
-	log.Info("Received response from the product service %s", resp.Message)
+	log.Info("Received response from the order management service %s", resp.Message)
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": resp.Message,
 	})
+}
+
+func GetOrders(c *gin.Context) {
+
+	// Extract userid
+	userid, err := GetUser(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": "Unable to extract the user details"})
+		return
+	}
+
+	// Grpc Request to Product Service
+	service := client.OrderManagementService
+	// Prepare the registration request
+	ordersReq := &proto.GetOrdersRequest{
+		CustomerId: userid,
+	}
+
+	resp, err := service.GetOrders(context.Background(), ordersReq)
+	if err != nil {
+		log.Error("Failed to get the orders", err)
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": err.Error()})
+		return
+	}
+
+	log.Info("Received response from the order management service %s", resp.Message)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": resp.Message,
+		"data":    resp.Orders,
+	})
+
 }
