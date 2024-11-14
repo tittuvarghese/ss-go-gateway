@@ -15,7 +15,7 @@ func NewOrderManagementServiceClient() *proto.OrderServiceClient {
 	if err != nil {
 		log.Error("Failed to connect to gRPC server", err)
 	}
-	log.Info("Successfully connected to product-service gRPC server")
+	log.Info("Successfully connected to order-management-service gRPC server")
 
 	// Create a new client for the AuthService
 	OrderManagementService = proto.NewOrderServiceClient(conn)
