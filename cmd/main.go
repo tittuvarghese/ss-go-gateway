@@ -34,6 +34,7 @@ func main() {
 	server.AddHandler(constants.HttpGet, constants.OrderServicePath, "/orders", jwt.Authorize(), service.GetOrders)
 	server.AddHandler(constants.HttpPost, constants.OrderServicePath, "/order", jwt.Authorize(), service.CreateOrder)
 	server.AddHandler(constants.HttpGet, constants.OrderServicePath, "/order/:orderId", jwt.Authorize(), service.GetOrder)
+	server.AddHandler(constants.HttpPost, constants.OrderServicePath, "/order/:orderId", jwt.Authorize(), service.UpdateOrder)
 
 	// Client Connections
 	client.NewCustomerServiceClient()

@@ -144,3 +144,46 @@ func GetOrder(c *gin.Context) {
 	})
 
 }
+
+func UpdateOrder(c *gin.Context) {
+	orderId := c.Param("orderId")
+
+	log.Info("Order Id: " + orderId)
+
+	var request models.OrderStatusUpdate
+
+	// Bind the JSON data to the user struct
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": err.Error()})
+		return
+	}
+	// Extract userid
+	userid, err := GetUser(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": "Unable to extract the user details"})
+		return
+	}
+
+	// Grpc Request to Product Service
+	service := client.OrderManagementService
+
+	updateOrderReq := &proto.UpdateOrderStatusRequest{
+		CustomerId: userid,
+		OrderId:    orderId,
+		Status:     request.Status,
+	}
+
+	resp, err := service.UpdateOrderStatus(context.Background(), updateOrderReq)
+	if err != nil {
+		log.Error("Failed to update the order ", err)
+		c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": err.Error()})
+		return
+	}
+
+	log.Info("Received response from the product service %s", resp.Message)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": resp.Message,
+	})
+}

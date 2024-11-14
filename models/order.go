@@ -21,3 +21,7 @@ type Address struct {
 	Zip          string `json:"zip" validate:"required"`
 	Country      string `json:"country"`
 }
+
+type OrderStatusUpdate struct {
+	Status string `json:"status" validate:"required"`
+}
