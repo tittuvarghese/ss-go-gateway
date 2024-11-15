@@ -1,7 +1,6 @@
 package client
 
 import (
-	"github.com/tittuvarghese/gateway/constants"
 	"github.com/tittuvarghese/product-service/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -9,9 +8,9 @@ import (
 
 var ProductService proto.ProductServiceClient
 
-func NewProductServiceClient() *proto.ProductServiceClient {
+func NewProductServiceClient(endpoint string) *proto.ProductServiceClient {
 	// Establish a connection to the gRPC server
-	conn, err := grpc.NewClient(constants.ProductServiceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(endpoint, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Error("Failed to connect to gRPC server", err)
 	}

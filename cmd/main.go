@@ -36,10 +36,25 @@ func main() {
 	server.AddHandler(constants.HttpGet, constants.OrderServicePath, "/order/:orderId", jwt.Authorize(), service.GetOrder)
 	server.AddHandler(constants.HttpPost, constants.OrderServicePath, "/order/:orderId", jwt.Authorize(), service.UpdateOrder)
 
+	customerServiceEndpoint := configManager.GetString(constants.CustomerServiceAddressEnv)
+	if customerServiceEndpoint == "" {
+		customerServiceEndpoint = constants.CustomerServiceAddress
+	}
+
+	productServiceEndpoint := configManager.GetString(constants.ProductServiceAddressEnv)
+	if productServiceEndpoint == "" {
+		productServiceEndpoint = constants.ProductServiceAddress
+	}
+
+	orderServiceEndpoint := configManager.GetString(constants.OrderServiceAddressEnv)
+	if orderServiceEndpoint == "" {
+		orderServiceEndpoint = constants.OrderServiceAddress
+	}
+
 	// Client Connections
-	client.NewCustomerServiceClient()
-	client.NewProductServiceClient()
-	client.NewOrderManagementServiceClient()
+	client.NewCustomerServiceClient(customerServiceEndpoint)
+	client.NewProductServiceClient(productServiceEndpoint)
+	client.NewOrderManagementServiceClient(orderServiceEndpoint)
 
 	server.Run(constants.HttpServerPort)
 }
