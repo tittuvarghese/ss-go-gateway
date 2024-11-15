@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  gateway:
+    container_name: gateway
+    image: tittuvarghese/scalableservice:latest
+    ports:
+      - "8080:8080"
+    command:
+      - "./gateway"
+    environment:
+      - CUSTOMER_SERVICE_ADDRESS=customer-service:8082
+      - PRODUCT_SERVICE_ADDRESS=product-service:8083
+      - ORDER_SERVICE_ADDRESS=order-management-service:8084
