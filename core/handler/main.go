@@ -39,12 +39,12 @@ func (s *Server) EnableRateLimiter() {
 	}))
 }
 
-func (s *Server) AddHandler(method, service, path string, handler gin.HandlerFunc) {
+func (s *Server) AddHandler(method, service, path string, handlers ...gin.HandlerFunc) {
 	switch method {
 	case "GET":
-		s.Router.GET(constants.ApiBasePath+service+path, handler)
+		s.Router.GET(constants.ApiBasePath+service+path, handlers...)
 	case "POST":
-		s.Router.POST(constants.ApiBasePath+service+path, handler)
+		s.Router.POST(constants.ApiBasePath+service+path, handlers...)
 	}
 }
 

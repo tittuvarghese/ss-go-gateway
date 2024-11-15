@@ -7,8 +7,15 @@ const HttpPost = "POST"
 const ApiBasePath = "/api/v1"
 const GatewayServicePath = "/gateway"
 const CustomerServicePath = "/customerservice"
+const ProductServicePath = "/productservice"
+const OrderServicePath = "/oms"
 
 // Service Addresses
 const (
-	CustomerServiceAddress = "127.0.0.1:8082"
+	CustomerServiceAddressEnv = "CUSTOMER_SERVICE_ADDRESS"
+	ProductServiceAddressEnv  = "PRODUCT_SERVICE_ADDRESS"
+	OrderServiceAddressEnv    = "ORDER_SERVICE_ADDRESS"
+	CustomerServiceAddress    = "127.0.0.1:8082"
+	ProductServiceAddress     = "127.0.0.1:8083"
+	OrderServiceAddress       = "127.0.0.1:8084"
 )
