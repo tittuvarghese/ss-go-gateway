@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 	"github.com/gin-gonic/gin"
-	"github.com/tittuvarghese/gateway/client"
-	"github.com/tittuvarghese/gateway/models"
-	"github.com/tittuvarghese/product-service/proto"
+	"github.com/tittuvarghese/ss-go-gateway/client"
+	"github.com/tittuvarghese/ss-go-gateway/models"
+	"github.com/tittuvarghese/ss-go-product-service/proto"
 	"net/http"
 )
 

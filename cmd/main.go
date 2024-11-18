@@ -1,16 +1,18 @@
 package main
 
 import (
-	"github.com/tittuvarghese/core/config"
-	"github.com/tittuvarghese/core/jwt"
-	"github.com/tittuvarghese/core/logger"
-	"github.com/tittuvarghese/gateway/client"
-	"github.com/tittuvarghese/gateway/constants"
-	"github.com/tittuvarghese/gateway/core/handler"
-	"github.com/tittuvarghese/gateway/service"
+	"github.com/tittuvarghese/ss-go-core/config"
+	"github.com/tittuvarghese/ss-go-core/jwt"
+	"github.com/tittuvarghese/ss-go-core/logger"
+	"github.com/tittuvarghese/ss-go-core/otel"
+	"github.com/tittuvarghese/ss-go-gateway/client"
+	"github.com/tittuvarghese/ss-go-gateway/constants"
+	"github.com/tittuvarghese/ss-go-gateway/core/handler"
+	"github.com/tittuvarghese/ss-go-gateway/service"
 )
 
 func main() {
+
 	log := logger.NewLogger(constants.ModuleName)
 	log.Info("Initialising Gateway Module")
 
@@ -18,10 +20,19 @@ func main() {
 	configManager := config.NewConfigManager(config.DEFAULT_CONFIG_PATH)
 	configManager.Enable()
 
+	if configManager.GetBool(constants.OtelEnableEnv) {
+		serviceName := configManager.GetString(constants.OtelServiceNameEnv)
+		collectorUrl := configManager.GetString(constants.OtelCollectorEnv)
+		insecureMode := configManager.GetBool(constants.OtelInsecureModeEnv)
+		otel.NewTraceProvider(serviceName, collectorUrl, insecureMode)
+	}
+
 	server := handler.NewHttpSerer()
 	server.EnableLogger()
 	server.EnableRecovery()
 	server.EnableRateLimiter()
+	server.EnableTelemetry()
+
 	// Handlers
 	server.AddHandler(constants.HttpGet, constants.GatewayServicePath, "/status", service.Status)
 	server.AddHandler(constants.HttpPost, constants.CustomerServicePath, "/register", service.Register)

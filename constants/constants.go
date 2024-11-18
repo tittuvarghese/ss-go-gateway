@@ -19,3 +19,11 @@ const (
 	ProductServiceAddress     = "127.0.0.1:8083"
 	OrderServiceAddress       = "127.0.0.1:8084"
 )
+
+// Otel
+const (
+	OtelEnableEnv       = "OTEL_ENABLED"
+	OtelServiceNameEnv  = "OTEL_SERVICE_NAME"
+	OtelCollectorEnv    = "OTEL_COLLECTOR_URL"
+	OtelInsecureModeEnv = "OTEL_INSECURE_MODE"
+)
