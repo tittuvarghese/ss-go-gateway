@@ -2,10 +2,11 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/tittuvarghese/core/logger"
-	"github.com/tittuvarghese/customer-service/proto"
-	"github.com/tittuvarghese/gateway/constants"
+	"github.com/tittuvarghese/ss-go-core/logger"
+	"github.com/tittuvarghese/ss-go-customer-service/proto"
+	"github.com/tittuvarghese/ss-go-gateway/constants"
 	limit "github.com/yangxikun/gin-limit-by-key"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	"golang.org/x/time/rate"
 	"time"
 )
@@ -46,6 +47,10 @@ func (s *Server) AddHandler(method, service, path string, handlers ...gin.Handle
 	case "POST":
 		s.Router.POST(constants.ApiBasePath+service+path, handlers...)
 	}
+}
+
+func (s *Server) EnableTelemetry() {
+	s.Router.Use(otelgin.Middleware(constants.ModuleName))
 }
 
 func (s *Server) Run(port string) {

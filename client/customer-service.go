@@ -1,8 +1,8 @@
 package client
 
 import (
-	"github.com/tittuvarghese/core/logger"
-	"github.com/tittuvarghese/customer-service/proto"
+	"github.com/tittuvarghese/ss-go-core/logger"
+	"github.com/tittuvarghese/ss-go-customer-service/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

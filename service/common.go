@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/tittuvarghese/core/jwt"
-	"github.com/tittuvarghese/core/logger"
-	"github.com/tittuvarghese/core/validator"
-	"github.com/tittuvarghese/customer-service/proto"
-	"github.com/tittuvarghese/gateway/client"
-	"github.com/tittuvarghese/gateway/models"
+	"github.com/tittuvarghese/ss-go-core/jwt"
+	"github.com/tittuvarghese/ss-go-core/logger"
+	"github.com/tittuvarghese/ss-go-core/validator"
+	"github.com/tittuvarghese/ss-go-customer-service/proto"
+	"github.com/tittuvarghese/ss-go-gateway/client"
+	"github.com/tittuvarghese/ss-go-gateway/models"
 	"net/http"
 )
 

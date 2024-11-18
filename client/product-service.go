@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/tittuvarghese/product-service/proto"
+	"github.com/tittuvarghese/ss-go-product-service/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
