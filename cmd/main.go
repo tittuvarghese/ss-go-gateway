@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/tittuvarghese/ss-go-core/config"
 	"github.com/tittuvarghese/ss-go-core/jwt"
 	"github.com/tittuvarghese/ss-go-core/logger"
@@ -22,10 +21,10 @@ func main() {
 	configManager.Enable()
 
 	if configManager.GetBool(constants.OtelEnableEnv) {
-		fmt.Println("Enabling Otel")
+		serviceName := configManager.GetString(constants.OtelServiceNameEnv)
 		collectorUrl := configManager.GetString(constants.OtelCollectorEnv)
 		insecureMode := configManager.GetBool(constants.OtelInsecureModeEnv)
-		otel.NewTraceProvider(constants.ModuleName, collectorUrl, insecureMode)
+		otel.NewTraceProvider(serviceName, collectorUrl, insecureMode)
 	}
 
 	server := handler.NewHttpSerer()

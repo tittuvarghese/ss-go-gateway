@@ -23,6 +23,7 @@ const (
 // Otel
 const (
 	OtelEnableEnv       = "OTEL_ENABLED"
+	OtelServiceNameEnv  = "OTEL_SERVICE_NAME"
 	OtelCollectorEnv    = "OTEL_COLLECTOR_URL"
 	OtelInsecureModeEnv = "OTEL_INSECURE_MODE"
 )
